@@ -1,7 +1,7 @@
 /* Change extention to use .scss if we want */
 
 .root {
-  background: red;
+  background: #016349;
   width: 100vw;
   display: flex;
   justify-content: flex-start;
