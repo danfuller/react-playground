@@ -35,7 +35,7 @@ export const Navigation = ({
         { navItems.map((item, i) => <Link href={ item.path } key={ item.path }>{ item.name }</Link>) }
       </nav>
       <nav className={styles.root}>
-        <Link href="/">Home</Link>
+        <Link href="/" prefetch={false}>Home</Link>
       </nav>
     </>
   )
