@@ -18,8 +18,8 @@ export const Navigation = () => {
           Issue with nextjs root link https://github.com/vercel/next.js/issues/51845 
           <Link href="/" prefetch={false}>Home</Link> 
         */}
-        <a href={ assetPath('') }>Home</a>
-        <Link href="/demo" prefetch={false}>Demo</Link>
+        <a className={styles.link} href={ assetPath('') }>Home</a>
+        <Link className={styles.link} href="/demo">DottedBackground</Link>
       </nav>
     </>
   )

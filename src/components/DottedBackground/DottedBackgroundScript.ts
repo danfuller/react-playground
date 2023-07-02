@@ -15,11 +15,10 @@ const DOT_COLOR = `rgb(63, 63, 63)`;
 
 /* 
 TODO:
-Random speed
+Random phantom speed / size?
 correct phantom end targets based on end edge
-maybe auto scale phantom count or quality if running a crap fps
-reset dots on resize (not phantoms)
-debug wether dpr ratio is messing with phantom targets
+maybe auto scale phantom count or quality if running at crap fps
+event out dot spacing / calculate ideal spacing
 */
 
 
@@ -45,19 +44,8 @@ export class DottedBackgroundAnimation {
     this.canvas = RENDER_OFF_SCREEN ? document.createElement("canvas") : targetCanvas
     this.ctx = this.canvas.getContext('2d', { alpha: false }) as CanvasRenderingContext2D
     this.resizeCanvas()
-
-
-    // reset this on resize
-    const rows = Math.floor(this.canvas.height / (DOT_SIZE + (SPACING)))
-    const cols = Math.floor(this.canvas.width / (DOT_SIZE + (SPACING)))
-
-    for (let i = 0; i < rows; i++) {
-      for (let j = 0; j < cols; j++) {
-        const x = ((j) * SPACING) + ((j + 1) * DOT_SIZE)
-        const y = ((i) * SPACING) + ((i + 1) * DOT_SIZE)
-        this.dots.push(new Dot(x, y, this.ctx))
-      }
-    }
+    
+    
 
     for (let ps = 0; ps < PHANTOM_COUNT; ps++) {
       this.phantoms.push(new Phantom(this.canvas, this.ctx))      
@@ -66,6 +54,20 @@ export class DottedBackgroundAnimation {
     window.addEventListener("resize", this.resizeCanvas.bind(this))
 
     this.animate()
+  }
+
+  generateDots() {
+    // reset this on resize
+    const rows = Math.floor(this.canvas.height / (DOT_SIZE + (SPACING)))
+    const cols = Math.floor(this.canvas.width / (DOT_SIZE + (SPACING)))
+    this.dots = []
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        const x = ((j) * SPACING) + ((j + 1) * DOT_SIZE)
+        const y = ((i) * SPACING) + ((i + 1) * DOT_SIZE)
+        this.dots.push(new Dot(x, y, this.ctx))
+      }
+    }
   }
 
   fillBackground() {
@@ -102,6 +104,7 @@ export class DottedBackgroundAnimation {
     }
     this.configureDPR()
     this.fillBackground()
+    this.generateDots()
     this.hasResized = true
   }
 
@@ -330,8 +333,8 @@ class Phantom {
       return Math.floor(Math.random() * length) + 1;
     }
 
-    let canvasHeight = this.canvas.height,
-        canvasWidth = this.canvas.width
+    let canvasHeight = this.canvas.height / (window.devicePixelRatio || 1),
+        canvasWidth = this.canvas.width / (window.devicePixelRatio || 1)
     switch (startingEdge) {
       case 0: 
         startPosition.x = randomPosition(canvasWidth)

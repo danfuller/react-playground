@@ -4,6 +4,10 @@
   background: red;
   width: 100vw;
   display: flex;
-  justify-content: space-evenly;
+  justify-content: flex-start;
   padding: var(--spacing);
+}
+
+.link {
+  margin: 0 1rem;
 }
