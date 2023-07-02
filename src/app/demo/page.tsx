@@ -9,6 +9,12 @@ export default function Demo() {
       <div style={{ width: 400, height: 400 }}>
         <DottedBackground/>
       </div>
+      <br/>
+      <hr/>
+      <br/>
+      <div style={{ width: 800, height: 400 }}>
+        <DottedBackground/>
+      </div>
     </main>
   )
 }
