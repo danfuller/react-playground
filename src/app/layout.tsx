@@ -1,7 +1,10 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
 
+import { Navigation } from '@/components/Navigation/Navigation';
+
 const inter = Inter({ subsets: ['latin'] })
+const pages = require.context('./', true,/^(?!src\/app).*page.tsx/).keys();
 
 export const metadata = {
   title: 'Create Next App',
@@ -15,7 +18,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <Navigation pages={pages}/>
+        {children}
+      </body>
     </html>
   )
 }

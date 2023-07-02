@@ -1,0 +1,9 @@
+/* Change extention to use .scss if we want */
+
+.root {
+  background: red;
+  width: 100vw;
+  display: flex;
+  justify-content: space-evenly;
+  padding: var(--spacing);
+}
