@@ -27,15 +27,20 @@ export const Navigation = ({
   }).filter(path => path.depth <= 1).reverse()  
 
   // can probably use the depth data to display submenu items if required.
-  console.log(navItems)
+  // console.log(navItems)
 
   return (
     <>
       <nav className={styles.root}>
-        { navItems.map((item, i) => <Link href={ item.path } key={ item.path }>{ item.name }</Link>) }
-      </nav>
-      <nav className={styles.root}>
-        <Link href="/" prefetch={false}>Home</Link>
+        { navItems.map((item, i) => 
+          <Link 
+            href={ item.path } 
+            key={ item.path }
+            prefetch={ item.path === "/" } // Weird bug in Nextjs (https://github.com/vercel/next.js/issues/51845)
+          >
+              { item.name }
+          </Link>
+        ) }
       </nav>
     </>
   )
