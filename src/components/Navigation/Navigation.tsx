@@ -36,9 +36,9 @@ export const Navigation = ({
           <Link 
             href={ item.path } 
             key={ item.path }
-            prefetch={ item.path === "/" } // Weird bug in Nextjs (https://github.com/vercel/next.js/issues/51845)
+            prefetch={ item.path === "/" ? true : false} // Weird bug in Nextjs (https://github.com/vercel/next.js/issues/51845)
           >
-              { item.name }
+              { item.name } { item.path === "/" ? "yes":"no" }
           </Link>
         ) }
       </nav>
