@@ -14,6 +14,8 @@ export const Navigation = ({
   pages
 } : NavigationProps) => {
 
+  // test creating nav with require.context keys() prop
+  // split resolved paths to create array of navigation objects
   const navItems : NavigationItem[] = pages.map((key : string) => {
     const path = key.replace('.','').replace('/page.tsx','') || '/'
     const segments = path.split('/')
@@ -27,13 +29,13 @@ export const Navigation = ({
     }
   }).filter(path => path.depth <= 1).reverse()  
 
-  // can probably use the depth data to display submenu items if required.
-  // console.log(navItems)
-
   return (
     <>
       <nav className={styles.root}>
-        <Link href="/" prefetch={false}>Home</Link>
+        {/*
+          Issue with nextjs root link https://github.com/vercel/next.js/issues/51845 
+          <Link href="/" prefetch={false}>Home</Link> 
+        */}
         <a href={ assetPath('') }>Home</a>
         <Link href="/demo" prefetch={false}>Demo</Link>
       </nav>
