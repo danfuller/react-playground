@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import styles from './Navigation.module.css';
+import { assetPath } from '@/tools/assetPath';
 
 type NavigationProps = {
   pages: string[]
@@ -33,6 +34,7 @@ export const Navigation = ({
     <>
       <nav className={styles.root}>
         <Link href="/" prefetch={false}>Home</Link>
+        <a href={ assetPath('') }>Home</a>
         <Link href="/demo" prefetch={false}>Demo</Link>
       </nav>
     </>
