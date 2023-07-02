@@ -27,7 +27,7 @@ export const Navigation = ({
   }).filter(path => path.depth <= 1).reverse()  
 
   // can probably use the depth data to display submenu items if required.
-  // console.log(navItems)
+  console.log(navItems)
 
   return (
     <>
