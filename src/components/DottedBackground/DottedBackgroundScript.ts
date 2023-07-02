@@ -1,20 +1,35 @@
 const DOT_SIZE = 18
-const PHANTOM_COUNT = 1
-const PHANTOM_SPEED = 4
+const PHANTOM_COUNT = 2
+const PHANTOM_SPEED = 3
+const DRAW_PHANTOMS = false
 const PROXIMITY_THRESHOLD = 500
 const MIN_MODIFIER_VALUE = 0
 const SPACING = 4
 const RESPAWN_PHANTOMS = true
-const RENDER_OFF_SCREEN = true
+const RENDER_OFF_SCREEN = false
 
+const PHANTOM_COLOR = `rgb(200, 0, 0)`
 const BACKGROUND_COLOR = `rgb(71, 71, 71)`;
 const DOT_COLOR = `rgb(63, 63, 63)`;
+
+
+/* 
+TODO:
+Random speed
+correct phantom end targets based on end edge
+maybe auto scale phantom count or quality if running a crap fps
+reset dots on resize (not phantoms)
+debug wether dpr ratio is messing with phantom targets
+*/
+
 
 export class DottedBackgroundAnimation {
   targetCanvas: HTMLCanvasElement
   targetCtx: CanvasRenderingContext2D
   canvas: HTMLCanvasElement
   ctx: CanvasRenderingContext2D
+
+  hasResized: boolean = false
 
   dots: Dot[] = []
   phantoms: Phantom[] = []
@@ -31,13 +46,10 @@ export class DottedBackgroundAnimation {
     this.ctx = this.canvas.getContext('2d', { alpha: false }) as CanvasRenderingContext2D
     this.resizeCanvas()
 
-    this.ctx.fillStyle = BACKGROUND_COLOR;
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
 
+    // reset this on resize
     const rows = Math.floor(this.canvas.height / (DOT_SIZE + (SPACING)))
     const cols = Math.floor(this.canvas.width / (DOT_SIZE + (SPACING)))
-
-    console.log(rows, cols)
 
     for (let i = 0; i < rows; i++) {
       for (let j = 0; j < cols; j++) {
@@ -51,19 +63,46 @@ export class DottedBackgroundAnimation {
       this.phantoms.push(new Phantom(this.canvas, this.ctx))      
     }
 
-    window.addEventListener("resize", this.resizeCanvas)
+    window.addEventListener("resize", this.resizeCanvas.bind(this))
 
     this.animate()
   }
 
+  fillBackground() {
+    this.ctx.fillStyle = BACKGROUND_COLOR;
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height)
+  }
+
+  configureDPR() {
+    const dpr = window.devicePixelRatio;
+    const rect = this.canvas?.parentElement?.getBoundingClientRect()
+    if (!rect) {
+      return
+    }
+
+    // Set the "actual" size of the canvas
+    this.canvas.width = rect.width * dpr;
+    this.canvas.height = rect.height * dpr;
+
+    // Scale the context to ensure correct drawing operations
+    this.ctx.scale(dpr, dpr);
+
+    // Set the "drawn" size of the canvas
+    this.canvas.style.width = `${rect.width}px`;
+    this.canvas.style.height = `${rect.height}px`;
+  }
+
   resizeCanvas() {
-    const container = this.targetCanvas.parentElement
+    const container = this.canvas.parentElement
     if (container) {
       this.canvas.width = container.offsetWidth
       this.canvas.height = container.offsetHeight
       this.targetCanvas.width = container.offsetWidth
       this.targetCanvas.height = container.offsetHeight
     }
+    this.configureDPR()
+    this.fillBackground()
+    this.hasResized = true
   }
 
   updateState() {
@@ -71,6 +110,9 @@ export class DottedBackgroundAnimation {
     this.phantoms.forEach((phantom, phantomIndex) => {
       const { x, y } = phantom
       this.dots.forEach((dot) => {
+        if (this.hasResized) {
+          dot.drawStaticDoc()
+        }
         distance = Math.sqrt(
           Math.pow(dot.x - x, 2) + Math.pow(dot.y - y, 2)
         )
@@ -84,9 +126,13 @@ export class DottedBackgroundAnimation {
         }
       })
     })
+    if (this.hasResized) {
+      this.hasResized = false
+    }
   }
 
   animate() {
+    // if (!RENDER_OFF_SCREEN) 
     // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
     
     this.dots.forEach((dot) => {
@@ -98,8 +144,10 @@ export class DottedBackgroundAnimation {
       // phantom.draw()
     })
 
-    this.targetCtx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-    this.targetCtx.drawImage(this.canvas, 0, 0)
+    if (RENDER_OFF_SCREEN) {
+      this.targetCtx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+      this.targetCtx.drawImage(this.canvas, 0, 0)
+    }
 
     this.updateState()
 
@@ -328,6 +376,10 @@ class Phantom {
     this.x += this.vector.x * this.speed
     this.y += this.vector.y * this.speed
 
+    if (DRAW_PHANTOMS) {
+      this.draw()
+    }
+
     let shouldReset
     switch (this.startingEdge) {
       case 0: 
@@ -355,8 +407,9 @@ class Phantom {
   }
 
   draw() {
+    this.ctx.fillStyle = PHANTOM_COLOR;
     this.ctx.beginPath()
-    this.ctx.arc(this.x, this.y, DOT_SIZE, 0, Math.PI * 2)
+    this.ctx.arc(this.x, this.y, DOT_SIZE / 2, 0, Math.PI * 2)
     this.ctx.fill()
   }
 }
