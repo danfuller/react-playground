@@ -27,10 +27,16 @@ export const Navigation = ({
   }).filter(path => path.depth <= 1).reverse()  
 
   // can probably use the depth data to display submenu items if required.
+  console.log(navItems)
 
   return (
-    <nav className={styles.root}>
-      { navItems.map((item, i) => <Link href={ item.path } key={ item.path }>{ item.name }</Link>) }
-    </nav>
+    <>
+      <nav className={styles.root}>
+        { navItems.map((item, i) => <Link href={ item.path } key={ item.path }>{ item.name }</Link>) }
+      </nav>
+      <nav className={styles.root}>
+        <Link href="/">Home</Link>
+      </nav>
+    </>
   )
 }
