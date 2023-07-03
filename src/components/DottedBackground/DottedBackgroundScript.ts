@@ -14,7 +14,7 @@ const DOT_COLOR = `rgb(63, 63, 63)`;
 
 
 /* 
-TODO:
+TODO: 
 Random phantom speed / size?
 correct phantom end targets based on end edge
 maybe auto scale phantom count or quality if running at crap fps
